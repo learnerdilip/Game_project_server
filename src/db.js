@@ -7,7 +7,7 @@ const databaseUrl =
 //create a new instance of the Sequelize class named db, passing the databaseUrl to the constructor.
 const db = new Sequelize(databaseUrl);
 //call the sync method of the instance you created. This method will sync the data in your database with the schema you are about to create.
-db.sync({ force: true })
+db.sync()
   .then(() => console.log("Sequelize connected to db"))
   .catch(console.error);
 //export db
