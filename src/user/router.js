@@ -37,8 +37,12 @@ router.post("/login", async (request, response) => {
   );
 
   if (passwordValid) {
-    // const token = toJWT({ id: user.id });
-    return response.send(user);
+    const userNew = {
+      id: user.id,
+      email: user.email,
+      token: toJWT({ id: user.id })
+    };
+    return response.send(userNew);
   } else {
     return response.send({ error: true, message: "incorrect password" });
   }
