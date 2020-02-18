@@ -26,7 +26,14 @@ app.get("/test", (req, res, next) => {
 app.get("/stream", async (req, res, next) => {
   try {
     const rooms = await Room.findAll({ include: [User] });
-    console.log(rooms);
+
+    const action = {
+      type: "ROOMS_FETCHED",
+      payload: rooms
+    };
+    const stringAction = JSON.stringify(action);
+    stream.updateInit(stringAction);
+    stream.init(req, res);
   } catch (error) {
     console.log(error);
   }

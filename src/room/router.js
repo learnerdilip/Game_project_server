@@ -6,10 +6,10 @@ const auth = require("../auth/middleWare");
 const factory = stream => {
   const router = new Router();
 
-  router.post("/room", async (request, response, next) => {
+  router.post("/room", auth, async (request, response, next) => {
     try {
-      // console.log("THE REQ BODY:", request.body);
-      const roomCreate = { room_name: request.body.room_name };
+      console.log("SERVER REQ BODY:", request.body);
+      const roomCreate = { room_name: request.body.room };
       const ref = await Room.create(roomCreate);
       const room = await Room.findByPk(ref.id, { include: [User] });
       const action = {
@@ -18,7 +18,7 @@ const factory = stream => {
       };
       const json = JSON.stringify(action);
       stream.send(json);
-      // response.send(json)
+      // response.send(json);
     } catch {
       error => next(error);
     }
