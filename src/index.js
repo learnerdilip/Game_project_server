@@ -11,7 +11,7 @@ const corsMiddleware = cors();
 app.use(corsMiddleware);
 app.use(express.json()); //Express own bodyParser
 
-app.use(roomRouter);
+app.use("/lobby", roomRouter);
 app.use("/user", userRouter); //Pass the router to app.use to register the middleware.
 app.get("/test", (req, res, next) => {
   res.send("Test endpoint working");
