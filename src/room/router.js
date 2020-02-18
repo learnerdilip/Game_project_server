@@ -24,4 +24,19 @@ router.get("/rooms", (request, response, next) => {
   }
 });
 
+router.delete("/room", (request, response, next) => {
+  Room.findByPk(request.body.id)
+    .then(room =>
+      Room.destroy({
+        where: {
+          id: room.id
+        }
+      })
+    )
+    .then(room => {
+      // console.log("ROOM IN BACKEND", request.body.id);
+      response.json(request.body.id);
+    });
+});
+
 module.exports = router;
