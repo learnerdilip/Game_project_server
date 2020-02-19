@@ -33,8 +33,9 @@ const factory = stream => {
         })
         .catch(console.error);
 
-      console.log("SERVER REQ BODY:", request.body);
-      const roomCreate = { room_name: request.body.room };
+      // console.log("SERVER REQ BODY:", request.body);
+      const roomCreate = { room_name: request.body.data };
+      console.log("room create,", roomCreate);
       const ref = await Room.create(roomCreate);
       const room = await Room.findByPk(ref.id, { include: [User] });
       const action = {
