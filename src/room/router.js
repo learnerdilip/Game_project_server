@@ -8,6 +8,31 @@ const factory = stream => {
 
   router.post("/room", auth, async (request, response, next) => {
     try {
+      const gameApiUrl =
+        "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1";
+      //the table API
+      Axios.get(gameApiUrl)
+        .then(carddeck => {
+          console.log("CARD DECK is here: ", carddeck.data);
+          const deckid = carddeck.data.deck_id;
+          const remainingcards = carddeck.data.remaining;
+          const isshuffled = carddeck.data.shuffled;
+          const gameDeck = {
+            deck_id: deckid,
+            remaining: remainingcards,
+            shuffled: isshuffled
+          };
+
+          Gametable.create(gameDeck).then(response => {
+            console.log(
+              "AFTER DECK CRETION, your deck is :",
+              response.dataValues
+            );
+            // stream.send(JSON.stringify(response));
+          });
+        })
+        .catch(console.error);
+
       // console.log("SERVER REQ BODY:", request.body);
       const roomCreate = { room_name: request.body.data };
       console.log("room create,", roomCreate);
