@@ -21,12 +21,6 @@ function factory(stream) {
   });
 
   router.post("/gametable", async (req, res, next) => {
-    // Gametable.findOne({where: {
-    //   roomId:
-    // }})
-
-    // console.log("the request bodyXXXXXXXXX", req.body.data);
-
     card_deck
       .findOne({
         where: {
@@ -34,21 +28,26 @@ function factory(stream) {
         }
       })
       .then(response => {
+        console.log("response:", response);
         const deck_id = response.dataValues.deck_id;
         User.findAll({
           where: {
             roomId: req.body.data
           }
         }).then(users => {
+          const userList = users.map(user => {
+            return user.dataValues.id;
+          });
+          const data = { users: userList, deck_id: deck_id };
+
           const action = {
             type: "TABLE_USERS",
-            payload: users,
-            deck_id: deck_id
+            payload: data
           };
-          console.log("ACTION---------------------", action);
+          // console.log("DATA---------------------", data);
           const json = JSON.stringify(action);
           stream.send(json);
-          res.send(action);
+          // res.send(data);
         });
       });
 
