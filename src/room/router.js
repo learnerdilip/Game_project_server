@@ -2,12 +2,26 @@ const { Router } = require("express");
 const Room = require("./model");
 const User = require("../user/model");
 const auth = require("../auth/middleWare");
+const Axios = require("axios");
+const card_deck = require("../gametable/model");
 
 const factory = stream => {
   const router = new Router();
 
   router.post("/room", auth, async (request, response, next) => {
     try {
+      // console.log("SERVER REQ BODYQWERTYUIOIUYTOOOOOO:", request.body);
+      const roomCreate = { room_name: request.body.data };
+      const ref = await Room.create(roomCreate);
+      const room = await Room.findByPk(ref.id, { include: [User] });
+      // console.log("THE NEW ROOMXXXXXXXXXX", room);
+      const action = {
+        type: "ROOM_CREATED",
+        payload: room
+      };
+      const json = JSON.stringify(action);
+      stream.send(json);
+
       const gameApiUrl =
         "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1";
       //the table API
@@ -20,30 +34,13 @@ const factory = stream => {
           const gameDeck = {
             deck_id: deckid,
             remaining: remainingcards,
-            shuffled: isshuffled
+            shuffled: isshuffled,
+            roomId: room.dataValues.id
           };
-
-          Gametable.create(gameDeck).then(response => {
-            console.log(
-              "AFTER DECK CRETION, your deck is :",
-              response.dataValues
-            );
-            // stream.send(JSON.stringify(response));
-          });
+          card_deck.create(gameDeck);
         })
         .catch(console.error);
 
-      // console.log("SERVER REQ BODY:", request.body);
-      const roomCreate = { room_name: request.body.data };
-      console.log("room create,", roomCreate);
-      const ref = await Room.create(roomCreate);
-      const room = await Room.findByPk(ref.id, { include: [User] });
-      const action = {
-        type: "ROOM_CREATED",
-        payload: room
-      };
-      const json = JSON.stringify(action);
-      stream.send(json);
       // response.send(json);
     } catch {
       error => next(error);

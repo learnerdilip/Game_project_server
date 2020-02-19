@@ -2,7 +2,6 @@ const { Router } = require("express");
 const User = require("../user/model");
 const Room = require("../room/model");
 const card_deck = require("../gametable/model");
-const Axios = require("axios");
 
 function factory(stream) {
   const router = new Router();
@@ -25,6 +24,15 @@ function factory(stream) {
     // Gametable.findOne({where: {
     //   roomId:
     // }})
+
+    console.log("the request bodyXXXXXXXXX", req.body);
+
+    card_deck.findOne({
+      where: {
+        roomId: req.body.data
+      }
+    });
+
     User.findAll({
       where: {
         roomId: req.body.data
