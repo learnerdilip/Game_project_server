@@ -25,27 +25,32 @@ function factory(stream) {
     //   roomId:
     // }})
 
-    console.log("the request bodyXXXXXXXXX", req.body);
+    // console.log("the request bodyXXXXXXXXX", req.body.data);
 
-    card_deck.findOne({
-      where: {
-        roomId: req.body.data
-      }
-    });
-
-    User.findAll({
-      where: {
-        roomId: req.body.data
-      }
-    }).then(users => {
-      const action = {
-        type: "TABLE_USERS",
-        payload: users
-      };
-      const json = JSON.stringify(action);
-      stream.send(json);
-      res.send(action);
-    });
+    card_deck
+      .findOne({
+        where: {
+          roomId: req.body.data
+        }
+      })
+      .then(response => {
+        const deck_id = response.dataValues.deck_id;
+        User.findAll({
+          where: {
+            roomId: req.body.data
+          }
+        }).then(users => {
+          const action = {
+            type: "TABLE_USERS",
+            payload: users,
+            deck_id: deck_id
+          };
+          console.log("ACTION---------------------", action);
+          const json = JSON.stringify(action);
+          stream.send(json);
+          res.send(action);
+        });
+      });
 
     try {
     } catch (error) {
