@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const User = require("../user/model");
 const Room = require("../room/model");
-const Gametable = require("../gametable/model");
+const card_deck = require("../gametable/model");
 const Axios = require("axios");
 
 function factory(stream) {
@@ -22,32 +22,9 @@ function factory(stream) {
   });
 
   router.post("/gametable", async (req, res, next) => {
-    // console.log("request from gametable backend", req.body);
-    const gameApiUrl =
-      "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1";
-    //the table API
-    Axios.get(gameApiUrl)
-      .then(carddeck => {
-        console.log("CARD DECK is here: ", carddeck.data);
-        const deckid = carddeck.data.deck_id;
-        const remainingcards = carddeck.data.remaining;
-        const isshuffled = carddeck.data.shuffled;
-        const gameDeck = {
-          deck_id: deckid,
-          remaining: remainingcards,
-          shuffled: isshuffled
-        };
-
-        Gametable.create(gameDeck).then(response => {
-          console.log(
-            "AFTER DECK CRETION, your deck is :",
-            response.dataValues
-          );
-          // stream.send(JSON.stringify(response));
-        });
-      })
-      .catch(console.error);
-
+    // Gametable.findOne({where: {
+    //   roomId:
+    // }})
     User.findAll({
       where: {
         roomId: req.body.data
